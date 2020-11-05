@@ -1,0 +1,66 @@
+version: "3.5"
+services:
+  aos-accountservice:
+    container_name: aos-accountservice
+    depends_on:
+    - aos-postgres
+    environment:
+      ACCOUNT_IP: nimbusserver.aos.com
+      ACCOUNT_PORT: "8001"
+      AGENT_NAME: aos-accountservice-dev
+      MAIN_IP: nimbusserver.aos.com
+      MAIN_PORT: "8000"
+      PGPASSWORD: Ptr9=k_.A*xx=PGn
+      POSTGRES_IP: aos-postgres
+      POSTGRES_PORT: "5432"
+    extra_hosts:
+    - nimbusserver.aos.com:172.50.0.1
+    - nimbusserver:172.50.0.1
+    image: admpresales/aos-accountservice:2.4
+    networks:
+      demo-net: null
+    ports:
+    - mode: ingress
+      target: 8080
+      published: 8001
+      protocol: tcp
+  aos-main:
+    container_name: aos-main
+    depends_on:
+    - aos-accountservice
+    environment:
+      ACCOUNT_IP: nimbusserver.aos.com
+      ACCOUNT_PORT: "8001"
+      AGENT_NAME: aos-main-dev
+      MAIN_IP: nimbusserver.aos.com
+      MAIN_PORT: "8000"
+      PGPASSWORD: Ptr9=k_.A*xx=PGn
+      POSTGRES_IP: aos-postgres
+      POSTGRES_PORT: "5432"
+    extra_hosts:
+    - nimbusserver.aos.com:172.50.0.1
+    - nimbusserver:172.50.0.1
+    image: admpresales/aos-main-app:2.4
+    networks:
+      demo-net: null
+    ports:
+    - mode: ingress
+      target: 8080
+      published: 8000
+      protocol: tcp
+  aos-postgres:
+    container_name: aos-postgres
+    environment:
+      POSTGRES_PORT: "5432"
+    image: admpresales/aos-postgres:2.4
+    networks:
+      demo-net: null
+    ports:
+    - mode: ingress
+      target: 5432
+      published: 5432
+      protocol: tcp
+networks:
+  demo-net:
+    name: demo-net
+    external: true
